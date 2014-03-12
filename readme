@@ -1,0 +1,7 @@
+1.
+ln -s platform_fra/system system
+
+2.
+
+ln -s ../wahz_admin/uploadimg uploadimg
+ln -s ../wahz_admin/thumbnail thumbnail 

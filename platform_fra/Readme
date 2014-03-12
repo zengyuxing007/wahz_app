@@ -1,0 +1,9 @@
+Just a php framework base mvc
+
+Linux PHP CLI test:
+
+php index.php controller method param_1 pram_2 ...
+
+example:
+    php index.php userdata
+
