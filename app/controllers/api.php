@@ -134,24 +134,26 @@ class Api extends MG_Controller
 	   3。3.22 ,前5周每周。共15位中奖者 最后一周为25位
 	 */
 	public function lottery(){
+		log_message('debug',"----lottery....");
 		$request = $this->input->get_post(NULL,TRUE);
         $response = '';
 		$result=0;
 		$reward_code = '';
-		if(!isset($request['unique_id']) or !isset($request['right_answers'])){
+		if(!isset($request['unique_id']) or !isset($request['right_answers']) or !$request['unique_id'] or !$request['right_answers']){
 			$result = 0;
-		}else{
-			//at first,check if unique_id exist;
-			if(!$this->wahz_model->check_user_exist($request['unique_id'])){
-				log_message('error',"unique_id[".$request['unique_id']."] not exist!!!");
-				$result = 0;
-			}
+		}
+		//at first,check if unique_id exist;
+		else if(!$this->wahz_model->check_user_exist($request['unique_id'])){
+			log_message('error',"unique_id[".$request['unique_id']."] not exist!!!");
+			$result = 0;
+		}
+		else{
 			//lottery process
 			//begin time : 3.22
 			$begin_time = strtotime('2014-02-22 00:00:00');
 			$internal_time = 7*24*3600; //one week
 			$reward_num_array = array(15,15,15,15,15,25);
-			if($request['test']){
+			if(isset($request['test'])){
 			    $reward_num_array = array(15000,15000,15000,15000,15000,25000);
 			}
 			$now = time();
@@ -159,9 +161,10 @@ class Api extends MG_Controller
 				log_message('debug',"---time begin:$begin_time");
 				$result = 0;
 			}
-			$week_num = intval(($now - $begin_time) / $internal_time);
-			//check this week if full
+            else
 			{
+			    $week_num = intval(($now - $begin_time) / $internal_time);
+			    //check this week if full
 				$total = 0;
 				for($i=0;$i<=$week_num;++$i){
 					$total += $reward_num_array[$i];
@@ -173,7 +176,7 @@ class Api extends MG_Controller
 				    $result = 0;	
 				}else{
 						//give a probability
-						$prob = 15+$request['right_answers'];
+						$prob = 15+intval($request['right_answers']);
 						$user_reward_num = $this->wahz_model->get_user_reward_num($request['unique_id']);
 						log_message('debug','user['.$request['unique_id']."] right_answer:".$request['right_answers']." and he have get reward[$user_reward_num]");
 						$max = 1000+$user_reward_num*500;
@@ -191,6 +194,7 @@ class Api extends MG_Controller
 			//end logic
 			}
 		}
+		log_message('debug',"lottery result:$result");
 		if($result){
 			$response = array('result' => $result, 'code' => $reward['code'],'reward' => $reward['reward_type']);
 		}else{
@@ -206,13 +210,18 @@ class Api extends MG_Controller
 
 	//advice
 	public function advice(){
-		$desc = array(0 => 'success',1 => 'lack some necessary paramters',500 => 'system error');
+		$desc = array(0 => 'success',1 => 'lack some necessary paramters',2 => 'userid not exist',500 => 'system error');
 		$request = $this->input->get_post(NULL,TRUE);
         $response = '';
         $result = 0;
-		if(!isset($request['unique_id']) or !isset($request['advice'])){
+		if(!isset($request['unique_id']) or !isset($request['advice']) or !$request['unique_id'] or !$request['advice'] ){
 			$result = 1;
-		}else{
+		}
+		//at first,check if unique_id exist;
+		else if(!$this->wahz_model->check_user_exist($request['unique_id'])){
+			log_message('error',"advice---unique_id[".$request['unique_id']."] not exist!!!");
+			$result = 2;
+		} else{
 		    if($this->wahz_model->up_advice($request['unique_id'],$request['advice'])){
 				$result = 0;
 			}else{
@@ -263,7 +272,7 @@ class Api extends MG_Controller
 		$request = $this->input->get_post(NULL,TRUE);
         $data = null;
 
-		if(!isset($request['unique_id'])){
+		if(!isset($request['unique_id']) or !$request['unique_id']){
 			$result = 1;
 		}
 		else{
@@ -296,13 +305,12 @@ class Api extends MG_Controller
 		if(!isset($request['device_token']) or !isset($request['unique_id']) or !isset($request['verify_code'])){
 			$result =1;
 		}
-/*
 		else if(md5($request['device_token'].$request['unique_id'].$this->salt) != strtolower($request['verify_code'])){
 			$result = 2;
 		}
-*/
 		else{
-			if($this->wahz_model->up_device_info($request['device_token'],$request['unique_id'])){
+			$device_token = str_replace(" ","",$request['device_token']);
+			if($this->wahz_model->up_device_info($device_token,$request['unique_id'])){
 				$result = 0;
 			}else{
 				$result = 500;

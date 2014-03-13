@@ -11,6 +11,7 @@ class Wahz_model extends MG_Model
 
 
     public function get_news_simple($startTime=1,$type=3,$limit=20){
+/*
 		$type_cond = '';
 		if($type == 3){
 			$type_cond = '(`type` = 1 or `type` = 2)';
@@ -19,23 +20,44 @@ class Wahz_model extends MG_Model
 			$type_cond = "`type` = $type";
 		}
 
-        $sql = "select `id`,`title`,`image_url`,`order`,`create_time` from news_simple where create_time >= $startTime and $type_cond limit $limit";
-        $query = $this->mydb->query($sql);
+*/
+//        $sql = "select `id`,`title`,`image_url`,`order`,`create_time` from news_simple where create_time >= $startTime and $type_cond limit $limit";
+ //       $query = $this->mydb->query($sql);
+		$this->mydb->select('`id`,`title`,`image_url`,`order`,`create_time`');
+		$this->mydb->where('create_time >=',$startTime);
+		if($type == 3){
+				$this->mydb->where('`type`',1);
+				$this->mydb->or_where('`type`',2);
+		}else{
+				$this->mydb->where('`type`',intval($type));
+		}
+		$this->mydb->limit($limit);
+		$query = $this->mydb->get('news_simple');
         return $query->result_array(); 
     }
 
 
 	public function get_news_content_by_id($id=0){
 		if(!$id) {return null;}
+		/*
 		log_message('debug',"id=$id");
 		$sql = "select `content` from news_simple where `id` = $id";
 		$query = $this->mydb->query($sql);
+*/
+		$this->mydb->select('`content`');
+		$this->mydb->where('id',$id);
+		$query = $this->mydb->get('news_simple');
 		return $query->result_array(); 
 	}
 
 	public function get_show_list($startTime=1){
+/*
 		$sql = "select `show_time`,`desc` from show_list where show_time >= $startTime";
         $query = $this->mydb->query($sql);
+*/
+		$this->mydb->select('show_time,desc');
+		$this->mydb->where('show_time >=',$startTime);
+		$query = $this->mydb->get('show_list');
         return $query->result_array(); 
 		
 	}
@@ -48,8 +70,13 @@ class Wahz_model extends MG_Model
 
 	public function check_user_exist($unique_id=null){
 		if(!$unique_id) return false;
+/*
 		$sql = "select 1 from user_data where unique_id = '$unique_id'";
 		$query = $this->mydb->query($sql);
+*/
+		//$this->mydb->select('1');
+		$this->mydb->where('unique_id',$unique_id);
+		$query = $this->mydb->get('user_data');
 	    if($row = $query->row_array()){
 			return true;
 		}
@@ -57,8 +84,8 @@ class Wahz_model extends MG_Model
 	}
 	
 	public function get_reward_num($end_time){
-	    $sql = "select count(1) as number from wahz_card where is_use!=0 and activeTime <=$end_time";
-		$query = $this->mydb->query($sql);
+	    $sql = "select count(1) as number from wahz_card where is_use!=0 and activeTime <= ?";
+		$query = $this->mydb->query($sql,array($end_time));
 		if($row = $query->row_array()){
 			return $row['number'];
 		}
@@ -66,8 +93,8 @@ class Wahz_model extends MG_Model
 	}
 
 	public function get_user_reward_num($unique_id){
-		$sql = "select count(1) as number from wahz_card where uid='$unique_id'";
-		$query = $this->mydb->query($sql);
+		$sql = "select count(1) as number from wahz_card where uid= ?";
+		$query = $this->mydb->query($sql,array($unique_id));
 		if($row = $query->row_array()){
 			return $row['number'];
 		}
@@ -86,9 +113,9 @@ class Wahz_model extends MG_Model
 
 	public function  get_user_all_record($unique_id){
 			if(!$unique_id) return null;
-			$sql = "select wahz_card.`code` FROM wahz_card WHERE wahz_card.`uid` = '$unique_id'";
+			$sql = "select wahz_card.`code` FROM wahz_card WHERE wahz_card.`uid` = ?";
 
-			$query = $this->mydb->query($sql);
+			$query = $this->mydb->query($sql,array($unique_id));
 			$code = array();
 			if($data = $query->result_array()){
 				foreach($data as $key => $d){
@@ -123,8 +150,14 @@ class Wahz_model extends MG_Model
 			return false;
 		}
 		$now = time();
-		$sql = "insert into advice(unique_id,info,create_time) values('$unique_id','$advice',$now)";
-        return $this->mydb->query($sql);
+		$data = array(
+			'unique_id' => $unique_id,
+			'info' => $advice,
+			'create_time' => $now,
+		);
+		//$sql = "insert into advice(unique_id,info,create_time) values('$unique_id','$advice',$now)";
+        //return $this->mydb->query($sql);
+		return $this->mydb->insert('advice',$data);
 	}
 
 	public function up_device_info($device_token,$unique_id){
@@ -132,7 +165,13 @@ class Wahz_model extends MG_Model
 			return false;
 		}
 		$now = time();
-		$sql = "replace into device_info(`unique_id`,`device_token`,create_time)  values('$unique_id','$device_token',$now)";
-        return $this->mydb->query($sql);
+		$data = array(
+			'unique_id' => $unique_id,
+			'device_token' => $device_token,
+			'create_time' => $now,
+		);
+		//$sql = "replace into device_info(`unique_id`,`device_token`,create_time)  values('$unique_id','$device_token',$now)";
+        //return $this->mydb->query($sql);
+		return $this->mydb->replace('device_info',$data);
 	}
 }
