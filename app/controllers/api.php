@@ -150,7 +150,7 @@ class Api extends MG_Controller
 		else{
 			//lottery process
 			//begin time : 3.22
-			$begin_time = strtotime('2014-02-22 00:00:00');
+			$begin_time = strtotime('2014-03-22 00:00:00');
 			$internal_time = 7*24*3600; //one week
 			$reward_num_array = array(15,15,15,15,15,25);
 			if(isset($request['test'])){
