@@ -325,6 +325,11 @@ class Api extends MG_Controller
 		$this->output->set_output(json_encode($response));
 	}
 
+	public function about(){
+       //echo '<h1>this is about page</h1>';
+	   $this->load->view('templates/t_about');
+	}
+
 }
 
 ?>
