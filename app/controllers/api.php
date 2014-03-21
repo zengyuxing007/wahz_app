@@ -16,6 +16,10 @@ class Api extends MG_Controller
        echo '<h1>api:Don\'t be panic!!!</h1>';
     }
 
+	public function download(){
+		echo '请点击链接下载：<a href="http://t.cn/8sbnzSX">http://t.cn/8sbnzSX</a>';
+	}
+
     public function getNewsList(){
        $request = $this->input->get_post(NULL,TRUE);
        $startTime = isset($request['startTime'])?$request['startTime']:0;
@@ -134,7 +138,7 @@ class Api extends MG_Controller
 	   3。3.22 ,前5周每周。共15位中奖者 最后一周为25位
 	 */
 	public function lottery(){
-		log_message('debug',"----lottery....");
+		//log_message('debug',"----lottery....");
 		$request = $this->input->get_post(NULL,TRUE);
         $response = '';
 		$result=0;
@@ -144,7 +148,7 @@ class Api extends MG_Controller
 		}
 		//at first,check if unique_id exist;
 		else if(!$this->wahz_model->check_user_exist($request['unique_id'])){
-			log_message('error',"unique_id[".$request['unique_id']."] not exist!!!");
+			log_message('error',"unique_id[".$request['unique_id']."] not exist or not in shanghai!!!");
 			$result = 0;
 		}
 		else{

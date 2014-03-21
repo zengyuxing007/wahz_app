@@ -78,8 +78,12 @@ class Wahz_model extends MG_Model
 		$this->mydb->where('unique_id',$unique_id);
 		$query = $this->mydb->get('user_data');
 	    if($row = $query->row_array()){
-			return true;
+			if(strpos($row['address'],"上海") !== false){
+			   log_message('debug',"$unique_id is in shanghai ok...");
+			   return true;
+			}
 		}
+	    log_message('debug',"$unique_id is [not] in shanghai,false...");
 		return false;
 	}
 	
