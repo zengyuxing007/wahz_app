@@ -11,7 +11,7 @@
 <body class="bg">
 <div class="content"> <img src="../img/about.jpg" width="100%"/>
 
-<div class="download_zone"> <img src="../img/android_qrcode.png" class="d_zone_img"/>
+<!--div class="download_zone"> <img src="../img/android_qrcode.png" class="d_zone_img"/>
     <div class="down_text">
       <h3>我爱汉字美—安卓版</h3>
       <div class="line30">教育游戏类APP<br />
@@ -19,7 +19,7 @@
         大小：34.4MB </div>
     </div>
   </div>
-  <div>提示：微信扫一扫会屏蔽外链，若无法下载，尝试其他的扫描软件吧。 </div>
+  <div>提示：微信扫一扫会屏蔽外链，若无法下载，尝试其他的扫描软件吧。 </div-->
 
 
 

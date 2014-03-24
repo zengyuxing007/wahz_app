@@ -184,7 +184,7 @@ class Api extends MG_Controller
 						$user_reward_num = $this->wahz_model->get_user_reward_num($request['unique_id']);
 						log_message('debug','user['.$request['unique_id']."] right_answer:".$request['right_answers']." and he have get reward[$user_reward_num]");
 						$max = 1000+$user_reward_num*500;
-						if(isset($request['debug']) or isset($request['test'])) $prob += $max;
+						//if(isset($request['debug']) or isset($request['test'])) $prob += $max;
 						$random = rand(0,$max);
 						log_message('debug',"prob[$prob],random:$random");
 						if($random <= $prob){
@@ -332,6 +332,9 @@ class Api extends MG_Controller
 	public function about(){
        //echo '<h1>this is about page</h1>';
 	   $this->load->view('templates/t_about');
+	}
+	public function ios_about(){
+			$this->load->view('templates/ios_about');
 	}
 
 }
